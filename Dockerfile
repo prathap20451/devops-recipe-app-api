@@ -1,7 +1,7 @@
-FROM python:3.9-alpine3.13
+FROM python:3.13-alpine3.20
 LABEL maintainer="londonappdeveloper.com"
 
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 
 ARG UID=101
 COPY ./requirements.txt /tmp/requirements.txt
