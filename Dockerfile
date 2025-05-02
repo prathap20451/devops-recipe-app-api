@@ -12,15 +12,15 @@ WORKDIR /app
 EXPOSE 8000
 
 ARG DEV=false
-RUN python -m venv /py && \
+RUN apk add --update --no-cache \
+    postgresql-client jpeg-dev zlib-dev libjpeg libjpeg-turbo-dev \
+    freetype-dev lcms2-dev openjpeg-dev tiff-dev tk-dev tcl-dev harfbuzz-dev fribidi-dev && \
+    python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
-    apk add --update --no-cache postgresql-client jpeg-dev && \
     apk add --update --no-cache --virtual .tmp-build-deps \
         build-base postgresql-dev musl-dev zlib zlib-dev linux-headers && \
     /py/bin/pip install -r /tmp/requirements.txt && \
-    if [ $DEV = "true" ]; \
-        then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
-    fi && \
+    if [ "$DEV" = "true" ]; then /py/bin/pip install -r /tmp/requirements.dev.txt; fi && \
     rm -rf /tmp && \
     apk del .tmp-build-deps && \
     adduser \
@@ -28,8 +28,7 @@ RUN python -m venv /py && \
         --disabled-password \
         --no-create-home \
         django-user && \
-    mkdir -p /vol/web/media && \
-    mkdir -p /vol/web/static && \
+    mkdir -p /vol/web/media /vol/web/static && \
     chown -R django-user:django-user /vol/web && \
     chmod -R 755 /vol/web && \
     chmod -R +x /scripts
